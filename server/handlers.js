@@ -4,6 +4,7 @@ const { MongoClient } = require("mongodb");
 require("dotenv").config();
 const { MONGO_URI } = process.env;
 const dbName = "exercises";
+
 const getSeats = async () => {
   const client = await MongoClient(MONGO_URI);
   await client.connect();
@@ -15,14 +16,17 @@ const getSeats = async () => {
   return Object.assign(...seats.map((seat) => ({ [seat._id]: seat })));
 };
 
-const upDateBookedSeats = async (_id) => {
+const upDateBookedSeats = async (_id, fullName, email) => {
   const client = await MongoClient(MONGO_URI);
   await client.connect();
   const db = client.db(dbName);
   console.log("connected!");
   let seats = await db
     .collection("seats")
-    .findOneAndUpdate({ _id }, { $set: { isBooked: true } });
+    .findOneAndUpdate(
+      { _id },
+      { $set: { isBooked: true, fullName: fullName, email: email } }
+    );
   client.close();
 };
 
@@ -38,4 +42,5 @@ const updateSeats = async (seats) => {
   }
   client.close();
 };
+
 module.exports = { getSeats, updateSeats, upDateBookedSeats };

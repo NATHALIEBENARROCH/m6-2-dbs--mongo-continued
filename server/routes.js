@@ -1,7 +1,12 @@
 //this is connection to front end
 
 const router = require("express").Router();
-const { getSeats, updateSeats, upDateBookedSeats } = require("./handlers");
+const {
+  getSeats,
+  updateSeats,
+  upDateBookedSeats,
+  updateUserData,
+} = require("./handlers");
 const NUM_OF_ROWS = 8;
 const SEATS_PER_ROW = 12;
 // Code that is generating the seats.
@@ -46,7 +51,7 @@ router.get("/api/seat-availability", async (req, res) => {
 });
 let lastBookingAttemptSucceeded = false;
 router.post("/api/book-seat", async (req, res) => {
-  const { seatId, creditCard, expiration } = req.body;
+  const { seatId, creditCard, expiration, fullName, email } = req.body;
 
   let seats = await getSeats();
   if (!state) {
@@ -76,7 +81,7 @@ router.post("/api/book-seat", async (req, res) => {
   // }
   // lastBookingAttemptSucceeded = !lastBookingAttemptSucceeded;
   state.bookedSeats[seatId] = true;
-  upDateBookedSeats(seatId);
+  upDateBookedSeats(seatId, fullName, email);
   return res.status(200).json({
     status: 200,
     success: true,
